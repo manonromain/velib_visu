@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="fc0dc0b7-1356-42ef-8e7c-71e61b276627" name="Default Changelist" comment="" />
+    <list default="true" id="fc0dc0b7-1356-42ef-8e7c-71e61b276627" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/api_calls.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/api_calls.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dash_app.py" beforeDir="false" afterPath="$PROJECT_DIR$/dash_app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/velib_data_with_date.csv" beforeDir="false" afterPath="$PROJECT_DIR$/velib_data_with_date.csv" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -13,8 +17,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/dash_app.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="110">
-              <caret line="103" column="19" selection-start-line="103" selection-start-column="19" selection-end-line="103" selection-end-column="19" />
+            <state relative-caret-position="429">
+              <caret line="105" column="45" selection-start-line="105" selection-start-column="45" selection-end-line="105" selection-end-column="45" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
               </folding>
@@ -81,7 +85,14 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
   </component>
@@ -108,12 +119,12 @@
       <option name="presentableId" value="Default" />
       <updated>1630949380606</updated>
       <workItem from="1630949390579" duration="16923000" />
-      <workItem from="1631108812063" duration="138000" />
+      <workItem from="1631108812063" duration="470000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="17061000" />
+    <option name="totallyTimeSpent" value="17393000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
@@ -150,8 +161,8 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/dash_app.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="110">
-          <caret line="103" column="19" selection-start-line="103" selection-start-column="19" selection-end-line="103" selection-end-column="19" />
+        <state relative-caret-position="429">
+          <caret line="105" column="45" selection-start-line="105" selection-start-column="45" selection-end-line="105" selection-end-column="45" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
           </folding>

@@ -1,4 +1,4 @@
-import locale
+import locale, os
 from datetime import datetime
 
 import dash
@@ -10,6 +10,7 @@ import requests
 from dash import dcc
 import dash_daq as daq
 from dash import html
+from flask import Flask
 from dash.dependencies import Input, Output
 
 df = pd.read_csv("velib_data_with_date.csv", index_col=0)
@@ -100,8 +101,10 @@ group_by_geo_df = group_by_geo_df.sort_values(by="day_hour_of_week_num")
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-server = app.server
+server = Flask(__name__)
+server.secret_key = os.environ.get('secret_key', 'secret')
+app = dash.Dash(name = __name__, server=server, suppress_callback_exceptions = True)
+
 app.layout = html.Div(children=[
     html.Div(className="row",
              children=[html.H1(children='Velib Visualisation'),
