@@ -25,7 +25,10 @@ print(df.date_retrieved.max())
 df = df.sort_values(by="last_reported")
 df = df[df.is_renting == 1]
 
+TIME_VARIABLE = "day_hour_of_week_num"
+
 df["day_hour_of_week_num"] = df["date_retrieved"].apply(lambda x: 100 * x.weekday() + x.hour)
+df["hour_num"] = df["date_retrieved"].apply(lambda x: x.hour)
 
 locale.setlocale(locale.LC_TIME, "fr_FR")
 df["Jour et heure"] = df["date_retrieved"].apply(lambda x: datetime.strftime(x, "%A %Hh"))
@@ -94,10 +97,10 @@ pretty_names_FR = {'num_bikes_available': 'Nombre de vélos disponibles',
                    }
 
 group_by_geo_df = df_geo.groupby(by=['station_id', 'name', 'lat', 'lon', 'capacity',
-                                     'Jour et heure', 'Time', 'rental_methods_str',
-                                     'day_hour_of_week_num']).agg({x: np.mean for x in metrics}).reset_index()
+                                     'rental_methods_str', 'Jour et heure', 'Time',
+                                     TIME_VARIABLE]).agg({x: np.mean for x in metrics}).reset_index()
 
-group_by_geo_df = group_by_geo_df.sort_values(by="day_hour_of_week_num")
+group_by_geo_df = group_by_geo_df.sort_values(by=TIME_VARIABLE)
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -208,6 +211,9 @@ def update_graph(in_french, mode_plot, yaxis_column_name, size_column_name):
     else:
         local_day_hour = "Time"
         labels = pretty_names_EN
+
+    #FIXME
+    #local_day_hour = TIME_VARIABLE
 
     if mode_plot == "Density":
         rescale_size += 1
