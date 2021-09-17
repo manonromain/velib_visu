@@ -21,7 +21,7 @@ df.to_csv("velib_data_with_date.csv")
 df.legible_last_reported = df.legible_last_reported.apply(datetime.fromisoformat)
 df.lastUpdated = df.lastUpdated.apply(datetime.fromisoformat)
 df.date_retrieved = df.date_retrieved.apply(datetime.fromisoformat)
-print(df.date_retrieved.max())
+date_last_updated = df.date_retrieved.max()
 df = df.sort_values(by="last_reported")
 df = df[df.is_renting == 1]
 
@@ -39,8 +39,8 @@ df["Time"] = df["date_retrieved"].apply(lambda x: datetime.strftime(x, "%A %I%p"
 req = requests.get("https://velib-metropole-opendata.smoove.pro/opendata/Velib_Metropole/station_information.json")
 loc_stations_data = req.json()["data"]["stations"]
 loc_stations_df = pd.DataFrame(loc_stations_data)
-loc_stations_df["rental_methods_str"] = loc_stations_df.rental_methods.apply(lambda x: x[0]
-if type(x) == list else "Aucun")
+loc_stations_df["rental_methods_str"] = loc_stations_df.rental_methods.apply(lambda x: x[0] if type(x) == list
+                                                                             else "Aucun")
 
 df_geo = df.merge(loc_stations_df, on="station_id")
 df_geo = df_geo.sort_values(by='date_retrieved')
@@ -102,69 +102,84 @@ group_by_geo_df = df_geo.groupby(by=['station_id', 'name', 'lat', 'lon', 'capaci
 
 group_by_geo_df = group_by_geo_df.sort_values(by=TIME_VARIABLE)
 
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
-server = Flask(__name__)
-server.secret_key = os.environ.get('secret_key', 'secret')
-app = dash.Dash(name = __name__, server=server, suppress_callback_exceptions = True)
+
+# Theme
+
+color_theme = {
+    "text" : "gray",
+    "bg" : "#F6F6F4",
+    "primary" : "#45B69C",
+    "accent1" : "#FC7753",
+    "continuous_scale" : ["#112C26", "#45B69C", "#FC7753"]
+}
+
+app = dash.Dash(name = __name__, title="Manon's Velib")
+server = app.server
 
 app.layout = html.Div(children=[
-    html.Div(className="row",
+    html.Div(className="row", id="header",
              children=[html.H1(children='Velib Visualisation'),
 
-                       html.Div([
-                           # [html.Label(id="lang-label"),
-                           #  dcc.RadioItems(
-                           #      id='language',
-                           #      options=[
-                           #          {'label': 'English', 'value': 'EN'},
-                           #          {'label': u'Français', 'value': 'FR'}
-                           #      ],
-                           #      value='EN'
-                           #  ),
-                            daq.ToggleSwitch(
-                                id='in_french',
-                                label=['English', 'Français'],
-                                style={'width': '250px', 'margin': 'auto'},
-                                value=False
-                            ),
-                            ],
-                           style={'width': '10%', 'display': 'inline-block'})
-                       ]),
+             daq.ToggleSwitch(
+                id='in_french',
+                label=['English', 'Français'],
+                style={'width': '250px', 'margin': 'auto'},
+                color=color_theme["accent1"],
+                value=False,
+                persistence=True
+             ),
+             html.P(id="last-updated"),
+
+                       # html.Div([
+                       #      ,
+                       #      ],
+                       #     style={'width': '10%', 'display': 'inline-block'})
+]),
 
 
-    html.Div(
-        [html.Div(className="row",
-                  children=[html.Label('Metrics', id="metrics-label"),
-                            dcc.Dropdown(
-                                id='yaxis-column',
-                                value='frac_ebikes'
-                            )],
-                  style={'width': '20%', 'display': 'inline-block'})
-            ,
-         html.Div(
-             [html.Label(id="size-label"),
-              dcc.Dropdown(
-                  id='size-column',
-                  value='num_bikes_available'
-              )],
-             style={'width': '20%', 'display': 'inline-block'}),
-         html.Div(
-             [html.Label('Mode'),
-              dcc.RadioItems(
-                  id='mode-plot',
-                  options=[
-                      {'label': 'Scatter', 'value': 'Scatter'},
-                      {'label': 'Density', 'value': 'Density'}
-                  ],
-                  value='Scatter'
-              )],
-             style={'width': '10%', 'display': 'inline-block'}),
-         ]),
     html.Div(className="row",
              children=[
                  html.Div(dcc.Graph(id='main-graphic'), style={'width': '60%', 'display': 'inline-block'}),
-                 html.Div(dcc.Graph(id='specific-graphic'), style={'width': '40%', 'display': 'inline-block'})])
+                 html.Div(dcc.Graph(id='specific-graphic'), style={'width': '40%', 'display': 'inline-block'}),
+
+                 html.Div(
+                     [html.Label('Mode'),
+                      dcc.RadioItems(
+                          id='mode-plot',
+                          value='Scatter',
+                          persistence=True
+                      )],
+                     style={'width': '20%', 'display': 'inline-block'}),
+
+                 html.Div(
+                     [html.Div(className="row",
+                               children=[html.Label(id="metrics-label"),
+                                         dcc.Dropdown(
+                                             id='yaxis-column',
+                                             value='frac_ebikes',
+                                             persistence=True
+                                         )],
+                               style={'width': '35%', 'display': 'inline-block'})
+                         ,
+                      html.Div(
+                          [html.Label(id="size-label"),
+                           dcc.Dropdown(
+                               id='size-column',
+                               value='num_bikes_available',
+                               persistence=True
+                           )],
+                          style={'width': '35%', 'display': 'inline-block'})
+                      ], id="wrapper"),
+
+
+    dcc.Markdown('''
+    ### Crédits
+    [Bike](https://icones8.fr/icon/Mqf6swlJAECa/bike) icône par [Icons8](https://icones8.fr)
+    ''')
+    ]),
+
+
 ])
 
 
@@ -174,6 +189,7 @@ app.layout = html.Div(children=[
     Output('mode-plot', 'options'),
     Output('size-label', 'children'),
     Output('metrics-label', 'children'),
+    Output('last-updated', 'children'),
     Input('in_french', 'value'))
 def update_language(in_french):
     if in_french:
@@ -183,7 +199,10 @@ def update_language(in_french):
             {'label': 'Densité', 'value': 'Density'}
         ]
         size_label = "Rayon"
-        metrics_label = "Mesure"
+        metrics_label = "Couleur"
+        locale.setlocale(locale.LC_TIME,"fr_FR")
+        last_updated_text = "Dernière mise à jour : {} à {}".format(date_last_updated.strftime("%d %B %Y"),
+                                                                    date_last_updated.strftime("%Hh%M"))
     else:
         options_y = [{"label": pretty_names_EN[x], "value": x} for x in metrics]
         options_mode = [
@@ -191,8 +210,11 @@ def update_language(in_french):
             {'label': 'Density', 'value': 'Density'}
         ]
         size_label = "Radius"
-        metrics_label = "Metric"
-    return options_y, options_y, options_mode, size_label, metrics_label
+        metrics_label = "Color"
+        locale.setlocale(locale.LC_TIME, "en_US")
+        last_updated_text = "Last updated : {} at {}".format(date_last_updated.strftime("%B %d, %Y"),
+                                                             date_last_updated.strftime("%H:%M"))
+    return options_y, options_y, options_mode, size_label, metrics_label, last_updated_text
 
 
 @app.callback(
@@ -202,7 +224,6 @@ def update_language(in_french):
     Input('yaxis-column', 'value'),
     Input('size-column', 'value'))
 def update_graph(in_french, mode_plot, yaxis_column_name, size_column_name):
-    print("updated", in_french)
     rescale_size = np.abs(group_by_geo_df[size_column_name])
     rescale_size = (rescale_size - rescale_size.min()) / (rescale_size.max() - rescale_size.min())
     if in_french:
@@ -219,22 +240,28 @@ def update_graph(in_french, mode_plot, yaxis_column_name, size_column_name):
         rescale_size += 1
         rescale_size *= 6
         fig = px.density_mapbox(group_by_geo_df, lat="lat", lon="lon", z=yaxis_column_name, radius=rescale_size,
-                                color_continuous_scale=px.colors.sequential.solar,
+                                #color_continuous_scale=px.colors.sequential.solar,
                                 hover_name="name", hover_data=["num_bikes_available", "capacity"],
                                 zoom=10, range_color=[0, group_by_geo_df[yaxis_column_name].max()],
-                                labels=labels,
+                                labels=labels, color_continuous_scale=color_theme["continuous_scale"],
                                 animation_frame=local_day_hour, animation_group="name")
     else:
         fig = px.scatter_mapbox(group_by_geo_df, lat="lat", lon="lon", color=yaxis_column_name, size=size_column_name,
-                                color_continuous_scale=px.colors.sequential.solar,
+                                #color_continuous_scale=px.colors.sequential.solar,
                                 hover_name="name", hover_data=["num_bikes_available", "capacity"],
                                 zoom=10, range_color=[0, group_by_geo_df[yaxis_column_name].max()],
-                                labels=labels,
+                                labels=labels, color_continuous_scale=color_theme["continuous_scale"],
                                 animation_frame=local_day_hour, animation_group="name")  # , width=800, height=800)
 
     fig.update_layout(clickmode='event+select')
     fig.update_layout(mapbox_style="carto-positron")
     fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
+
+    fig.update_layout(
+        font_family="Trebuchet MS",
+        font_color=color_theme["text"],
+        paper_bgcolor=color_theme["bg"],
+    )
 
     return fig
 
@@ -242,7 +269,6 @@ def update_graph(in_french, mode_plot, yaxis_column_name, size_column_name):
 @app.callback(
     Output('specific-graphic', 'figure'),
     Input('in_french', 'value'),
-    #Input('yaxis-column', 'value'),
     Input('main-graphic', 'clickData'))
 def display_click_data(in_french, clickData):
     yaxis_column_name = "num_bikes_available"
@@ -259,10 +285,11 @@ def display_click_data(in_french, clickData):
         dff = df_geo[(df_geo.lat == data["lat"]) & (df_geo.lon == data["lon"])]
 
         fig = px.scatter(dff, x="date_retrieved", y=yaxis_column_name,
-                         title=title, labels={"date_retrieved": "",
-                                              yaxis_column_name: y_label})
+                         title=title, range_color="#45B69C",
+                         labels={"date_retrieved": "", yaxis_column_name: y_label})
 
-        return fig
+        fig.update_traces(marker=dict(color=color_theme["primary"]))
+
     else:
         if in_french:
             text_none = "Cliquez sur une station pour voir les données"
@@ -286,9 +313,15 @@ def display_click_data(in_french, clickData):
             ]
         )
 
-        return fig
+    fig.update_layout(
+        font_family="Trebuchet MS",
+        font_color=color_theme["text"],
+        plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor=color_theme["bg"],
+    )
+    return fig
 
 
 
 if __name__ == "__main__":
-    app.run_server(host='127.0.0.1', debug=True)
+    app.run_server(debug=True) #host='127.0.0.1',
