@@ -30,10 +30,10 @@ TIME_VARIABLE = "day_hour_of_week_num"
 df["day_hour_of_week_num"] = df["date_retrieved"].apply(lambda x: 100 * x.weekday() + x.hour)
 df["hour_num"] = df["date_retrieved"].apply(lambda x: x.hour)
 
-locale.setlocale(locale.LC_TIME, "fr_FR")
+#locale.setlocale(locale.LC_TIME, "fr_FR")
 df["Jour et heure"] = df["date_retrieved"].apply(lambda x: datetime.strftime(x, "%A %Hh"))
 
-locale.setlocale(locale.LC_TIME, "en_US")
+#locale.setlocale(locale.LC_TIME, "en_US")
 df["Time"] = df["date_retrieved"].apply(lambda x: datetime.strftime(x, "%A %I%p"))
 
 req = requests.get("https://velib-metropole-opendata.smoove.pro/opendata/Velib_Metropole/station_information.json")
@@ -200,7 +200,7 @@ def update_language(in_french):
         ]
         size_label = "Rayon"
         metrics_label = "Couleur"
-        locale.setlocale(locale.LC_TIME,"fr_FR")
+        #locale.setlocale(locale.LC_TIME,"fr_FR")
         last_updated_text = "Dernière mise à jour : {} à {}".format(date_last_updated.strftime("%d %B %Y"),
                                                                     date_last_updated.strftime("%Hh%M"))
     else:
@@ -211,7 +211,7 @@ def update_language(in_french):
         ]
         size_label = "Radius"
         metrics_label = "Color"
-        locale.setlocale(locale.LC_TIME, "en_US")
+        #locale.setlocale(locale.LC_TIME, "en_US")
         last_updated_text = "Last updated : {} at {}".format(date_last_updated.strftime("%B %d, %Y"),
                                                              date_last_updated.strftime("%H:%M"))
     return options_y, options_y, options_mode, size_label, metrics_label, last_updated_text
