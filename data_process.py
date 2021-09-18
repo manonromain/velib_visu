@@ -4,7 +4,7 @@ from datetime import datetime
 import numpy as np
 import pandas as pd
 import requests
-from tslearn.clustering import TimeSeriesKMeans
+# from tslearn.clustering import TimeSeriesKMeans
 from sklearn.cluster import KMeans
 
 
