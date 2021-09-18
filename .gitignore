@@ -2,4 +2,5 @@ velib
 *.pyc
 .DS_Store
 .env
-.idea/*
+.idea/
+dash_app_debugging.py

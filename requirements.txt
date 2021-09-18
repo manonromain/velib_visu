@@ -7,4 +7,5 @@ dash
 requests
 dash_daq
 tqdm
+tslearn
 gunicorn
