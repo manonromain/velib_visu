@@ -213,9 +213,8 @@ def display_click_data(in_french, clickData):
 
 @app.callback(
     Output('clustering-graphic', 'figure'),
-    Input('in_french', 'value'),
-    Input('yaxis-column', 'value'))
-def update_clustering_graph(in_french, yaxis_column_name):
+    Input('in_french', 'value'))
+def update_clustering_graph(in_french):
     if in_french:
         labels = pretty_names_FR
     else:

@@ -4,10 +4,7 @@ from datetime import datetime
 import numpy as np
 import pandas as pd
 import requests
-# from tslearn.clustering import TimeSeriesKMeans
 from sklearn.cluster import KMeans
-
-
 
 def preprocess(csv_name):
     df = pd.read_csv(csv_name, index_col=0)
@@ -87,7 +84,6 @@ def clustering(df_geo):
         x = group_by_geo_df.loc[name].num_bikes_available.to_numpy().copy()
 
         # Normalize
-
         if x.shape[0] == shape_max:
             if x.max():
                 x /= x.max()
@@ -101,9 +97,13 @@ def clustering(df_geo):
     dataset = np.array(dataset)
     group_by_geo_df = group_by_geo_df.reset_index()
 
+    print("before model")
+
     # model = TimeSeriesKMeans(n_clusters=3, metric="softdtw", max_iter=10)
     model = KMeans(n_clusters=3)
     model.fit(dataset)
+
+    print("after model")
 
     cluster_df = group_by_geo_df[group_by_geo_df.name.isin(labelled_names)]
     cluster_df.loc[:, "Cluster"] = cluster_df.name.apply(lambda x: str(model.labels_[labelled_names.index(x)]))
